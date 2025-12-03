@@ -4,6 +4,7 @@ from config import settings
 
 # Create your models here.
 
+
 class Habit(models.Model):
     """
     Модель для описания привычки в формате:
@@ -16,7 +17,7 @@ class Habit(models.Model):
         blank=True,
         null=True,
         verbose_name="Создатель привычки",
-        related_name="habits"
+        related_name="habits",
     )
     location = models.CharField(max_length=250, verbose_name="Место")
     time = models.TimeField(verbose_name="Время")
@@ -26,7 +27,7 @@ class Habit(models.Model):
         verbose_name="Признак приятной привычки",
     )
     related_habit = models.ForeignKey(
-        'self',
+        "self",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -56,9 +57,7 @@ class Habit(models.Model):
     class Meta:
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"
-        ordering = ['time']
+        ordering = ["time"]
 
     def __str__(self):
         return f"Я буду {self.action} в {self.time} в {self.location}"
-
-

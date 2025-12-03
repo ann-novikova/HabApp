@@ -1,5 +1,7 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.models import User
 from users.permissions import UserIsOwner
@@ -12,6 +14,7 @@ class UserListApiView(ListAPIView):
     queryset = User.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = PublicUserSerializer
+
 
 class UserRetriveApiView(RetrieveAPIView):
     """Контроллер для просмотра данных о пользователе"""

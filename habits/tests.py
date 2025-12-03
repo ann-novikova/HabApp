@@ -20,7 +20,7 @@ class HabitTestCase(APITestCase):
             reward="Сьесть печенье",
             periodicity=1,
             duration=100,
-            is_public=True
+            is_public=True,
         )
         self.client.force_authenticate(user=self.user)
 
@@ -31,3 +31,61 @@ class HabitTestCase(APITestCase):
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("action"), self.habit.action)
+
+    def test_habit_create(self):
+        """Тестирование создание привычки"""
+        url = reverse("habits:my_habit-list")
+        data = {
+            "location": "Кухня",
+            "time": "08:00",
+            "action": "Выпить кофе",
+            "is_pleasant": True,
+            "periodicity": 1,
+            "duration": 100,
+            "is_public": True,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Habit.objects.all().count(), 2)
+
+    def test_habit_update(self):
+        """Тестирование обновления деталей привычки"""
+        url = reverse("habits:my_habit-detail", args=(self.habit.pk,))
+        data = {"action": "Выпить лактобактерии", "is_pleasant": True}
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data.get("action"), "Выпить лактобактерии")
+
+    def test_habit_delete(self):
+        """Тестирование удаления привычки"""
+        url = reverse("habits:my_habit-detail", args=(self.habit.pk,))
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Habit.objects.all().count(), 0)
+
+    def test_habits_list(self):
+        """Тестирование вывода списка привычек"""
+        url = reverse("habits:my_habit-list")
+        response = self.client.get(url)
+        result = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.habit.pk,
+                    "owner": self.user.pk,
+                    "location": self.habit.location,
+                    "time": "19:00:00",
+                    "action": self.habit.action,
+                    "is_pleasant": self.habit.is_pleasant,
+                    "related_habit": None,
+                    "periodicity": self.habit.periodicity,
+                    "reward": self.habit.reward,
+                    "duration": self.habit.duration,
+                    "is_public": self.habit.is_public,
+                }
+            ],
+        }
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), result)

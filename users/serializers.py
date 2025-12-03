@@ -19,6 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         return super().update(instance, validated_data)
 
+
 class PublicUserSerializer(serializers.ModelSerializer):
     """ "Сериализатор для пользователя при публичном просмотре"""
 

@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from .apps import HabitsConfig
@@ -8,9 +8,9 @@ app_name = HabitsConfig.name
 
 router = SimpleRouter()
 
-router.register('my_habits/', HabitViewSet, basename='my_habit')
-router.register('public_habits/', PublicHabitListViewSet, basename='public_habit')
+router.register("my_habits", HabitViewSet, basename="my_habit")
+router.register("public_habits", PublicHabitListViewSet, basename="public_habit")
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]
