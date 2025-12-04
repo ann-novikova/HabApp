@@ -1,8 +1,8 @@
 import os
 from datetime import timedelta
-import pytz
 from pathlib import Path
 
+import pytz
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -138,7 +138,7 @@ SIMPLE_JWT = {
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
-CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_TIMEZONE = "Europe/Moscow"
 
 CELERY_TASK_TRACK_STARTED = True
 
