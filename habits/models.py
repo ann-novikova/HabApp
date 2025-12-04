@@ -49,6 +49,9 @@ class Habit(models.Model):
         help_text="Не должно превышать 120 секунд.",
     )
 
+    reminder_task_id = models.CharField(max_length=255, null=True, blank=True,
+                                        help_text="Celery task ID for the scheduled reminder")
+
     is_public = models.BooleanField(
         default=False,
         verbose_name="Признак публичности",
