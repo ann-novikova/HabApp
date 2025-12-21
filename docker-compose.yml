@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: habits_app
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_HOST: db
+      REDIS_HOST: redis
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16.3
+    container_name: postgres_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    command: >
+      sh -c "celery -A config worker --loglevel=info"
+    env_file:
+      - .env
+    environment:
+      DATABASE_HOST: db
+      REDIS_HOST: redis
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+      - web
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_beat
+    command: >
+      sh -c "celery -A config beat --loglevel=info"
+    env_file:
+      - .env
+    environment:
+      DATABASE_HOST: db
+      REDIS_HOST: redis
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+      - web
+
+volumes:
+  postgres_data:
